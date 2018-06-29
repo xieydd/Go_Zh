@@ -13,7 +13,7 @@ func main() {
 	values := []int{4, 7, 2, 5, 34, 2, 8, 9, 0}
 	result := sort(values)
 	for _, i := range result {
-		fmt.Printf("%d\t", i)
+		fmt.Printf("%d", i)
 	}
 }
 
@@ -30,7 +30,7 @@ func sort(values []int) []int {
 		root = add(root, v)
 	}
 
-	a := appendValues(values[:], root)
+	a := appendValues(values[:0], root)
 	return a
 
 }
@@ -77,6 +77,7 @@ func count() {
 
 		if err != nil {
 			fmt.Fprint(os.Stderr, "character: %v\n", err)
+			os.Exit(1)
 		}
 
 		if r == unicode.ReplacementChar && n == 1 {
@@ -88,14 +89,16 @@ func count() {
 		utflen[n]++
 	}
 
-	fmt.Printf("rune \t count \n")
+	fmt.Printf("rune\tcount\n")
 	for x, v := range counts {
-		fmt.Printf("%q \t %d\n", x, v)
+		fmt.Printf("%q\t%d\n", x, v)
 	}
 
-	fmt.Printf("nlen \t tcount \n")
+	fmt.Printf("nlen\ttcount\n")
 	for j, k := range utflen {
-		fmt.Printf("%d \t %d \n", j, k)
+		if j > 0 {
+			fmt.Printf("%d\t%d\n", j, k)
+		}
 	}
 
 	if invalid > 0 {
