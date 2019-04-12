@@ -1,26 +1,26 @@
 package main
 
 import (
-    "bufio"
-    "fmt"
-    "github.com/xieydd/Go_Zh/go-language-programming/chapter4/cgss/src/cg"
-    "github.com/xieydd/Go_Zh/go-language-programming/chapter4/cgss/src/ipc"
-    "os"
-    "strconv"
-    "strings"
+	"bufio"
+	"fmt"
+	"github.com/xieydd/Go_Zh/go-language-programming/chapter4/cgss/src/cg"
+	"github.com/xieydd/Go_Zh/go-language-programming/chapter4/cgss/src/ipc"
+	"os"
+	"strconv"
+	"strings"
 )
 
 var centerClient *cg.CenterClient
 
 func startCenterServer() error {
-    server := ipc.NewIpcServer(&cg.CenterServer{})
-    client := ipc.NewIpcClient(server)
-    centerClient = &cg.CenterClient{client}
-    return nil
+	server := ipc.NewIpcServer(&cg.CenterServer{})
+	client := ipc.NewIpcClient(server)
+	centerClient = &cg.CenterClient{client}
+	return nil
 }
 
 func Help(args []string) int {
-    fmt.Println(`
+	fmt.Println(`
         Commands:
         login <username><level><exp>
         logout <username>
@@ -28,112 +28,112 @@ func Help(args []string) int {
         listplayer
         quit(q)
         help(h)`)
-    return 0
+	return 0
 }
 
 func Quit(args []string) int {
-    return 0
+	return 0
 }
 
 func Login(args []string) int {
-    if len(args) != 4 {
-        fmt.Println("Usage : login <username><level><exp>")
-        return 0
-    }
+	if len(args) != 4 {
+		fmt.Println("Usage : login <username><level><exp>")
+		return 0
+	}
 
-    level, err := strconv.Atoi(args[2])
+	level, err := strconv.Atoi(args[2])
 
-    if err != nil {
-        fmt.Println("Invalid Parameter: <level> should be an integer.")
-        return 0
-    }
+	if err != nil {
+		fmt.Println("Invalid Parameter: <level> should be an integer.")
+		return 0
+	}
 
-    exp, err := strconv.Atoi(args[3])
-    if err != nil {
-        fmt.Println("Invalid Parameter: <level> should be an integer.")
-        return 0
-    }
+	exp, err := strconv.Atoi(args[3])
+	if err != nil {
+		fmt.Println("Invalid Parameter: <exp> should be an integer.")
+		return 0
+	}
 
-    player := cg.NewPlayer()
-    player.Name = args[1]
-    player.Exp = exp
-    player.Level = level
+	player := cg.NewPlayer()
+	player.Name = args[1]
+	player.Exp = exp
+	player.Level = level
 
-    err = centerClient.AddPlayer(player)
-    if err != nil {
-        fmt.Println("Failed. ", err)
-    }
-    return 0
+	err = centerClient.AddPlayer(player)
+	if err != nil {
+		fmt.Println("Failed. ", err)
+	}
+	return 0
 }
 
 func Logout(args []string) int {
-    if len(args) != 2 {
-        fmt.Println("Usage: logout <username>")
-        return 0
-    }
-    centerClient.RemovePlayer(args[1])
-    return 0
+	if len(args) != 2 {
+		fmt.Println("Usage: logout <username>")
+		return 0
+	}
+	centerClient.RemovePlayer(args[1])
+	return 0
 }
 
 func ListPlayer(args []string) int {
-    ps, err := centerClient.ListPlayer("")
-    if err != nil {
-        fmt.Println("Failed", err)
-    }else {
-        for i, v := range ps {
-            fmt.Println(i+1, ":", v)
-        }
-    }
-    return 0
+	ps, err := centerClient.ListPlayer("")
+	if err != nil {
+		fmt.Println("Failed", err)
+	} else {
+		for i, v := range ps {
+			fmt.Println(i+1, ":", v)
+		}
+	}
+	return 0
 }
 
 func Send(args []string) int {
-    message := strings.Join(args[1:], " ")
+	message := strings.Join(args[1:], " ")
 
-    err := centerClient.Broadcast(message)
+	err := centerClient.Broadcast(message)
 
-    if err != nil {
-        fmt.Println("Failed", err)
-    }
-    return 0
+	if err != nil {
+		fmt.Println("Failed", err)
+	}
+	return 0
 }
 
 func GetCommandHandlers() map[string]func(args []string) int {
-    return map[string]func(args []string) int {
-        "help": Help,
-        "h": Help,
-        "quit": Quit,
-        "q": Quit,
-        "login": Login,
-        "logout": Logout,
-        "listplayer": ListPlayer,
-        "send": Send,
-    }
+	return map[string]func(args []string) int{
+		"help":       Help,
+		"h":          Help,
+		"quit":       Quit,
+		"q":          Quit,
+		"login":      Login,
+		"logout":     Logout,
+		"listplayer": ListPlayer,
+		"send":       Send,
+	}
 }
 
 func main() {
-    fmt.Println("Awesome Game Server Solution")
+	fmt.Println("Awesome Game Server Solution")
 
-    startCenterServer()
+	startCenterServer()
 
-    Help(nil)
+	Help(nil)
 
-    r := bufio.NewReader(os.Stdin)
+	r := bufio.NewReader(os.Stdin)
 
-    handlers := GetCommandHandlers()
+	handlers := GetCommandHandlers()
 
-    for {
-        fmt.Print("Command> ")
-        b, _, _ := r.ReadLine()
-        line := string(b)
-        tokens := strings.Split(line, " ")
-        if handler, ok := handlers[tokens[0]]; ok {
-            ret := handler(tokens)
-            if ret != 0 {
-                break
-            }
-        }else {
-            fmt.Println("Unknown command:", tokens[0])
-        }
-    }
+	for {
+		fmt.Print("Command> ")
+		b, _, _ := r.ReadLine()
+		line := string(b)
+		tokens := strings.Split(line, " ")
+		if handler, ok := handlers[tokens[0]]; ok {
+			ret := handler(tokens)
+			if ret != 0 {
+				break
+			}
+		} else {
+			fmt.Println("Unknown command:", tokens[0])
+		}
+	}
 }

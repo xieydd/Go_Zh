@@ -1,16 +1,16 @@
 package main
 
 import (
-    "fmt"
+	"fmt"
 )
 
 func Add(x int, y int) {
-    z := x + y
-    fmt.Println(z)
+	z := x + y
+	fmt.Println(z)
 }
 
 func main() {
-    for i := 0; i < 10; i++ {
-        go Add(i,i)
-    }
+	for i := 0; i < 10; i++ {
+		go Add(i, i)
+	}
 }
