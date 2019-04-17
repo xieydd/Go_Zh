@@ -1,9 +1,9 @@
 package simplemath
 
 import (
-    "math"
+	"math"
 )
 
 func Sqrt(i int) int {
-    return int(math.Sqrt(float64(i)))
+	return int(math.Sqrt(float64(i)))
 }

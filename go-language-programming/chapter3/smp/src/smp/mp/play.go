@@ -1,24 +1,24 @@
 package mp
 
 import (
-    "fmt"
+	"fmt"
 )
 
 type Player interface {
-    Play(source string)
+	Play(source string)
 }
 
 func Play(source, mtype string) {
-    var p Player
+	var p Player
 
-    switch mtype {
-        case "MP3":
-            p = &MP3Player{}
-        case "WAV":
-            //p = &WAVPlayer{}
-        default:
-            fmt.Println("Unsupported music type: ", mtype)
-            return
-    }
-    p.Play(source)
+	switch mtype {
+	case "MP3":
+		p = &MP3Player{}
+	case "WAV":
+		//p = &WAVPlayer{}
+	default:
+		fmt.Println("Unsupported music type: ", mtype)
+		return
+	}
+	p.Play(source)
 }

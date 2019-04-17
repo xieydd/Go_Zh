@@ -13,6 +13,6 @@ import "unsafe"
 func main() {
 	cstr := C.CString("Xieyuandong")
 	C.puts(cstr)
-    C.c_print(cstr)
+	C.c_print(cstr)
 	defer C.free(unsafe.Pointer(cstr))
 }
